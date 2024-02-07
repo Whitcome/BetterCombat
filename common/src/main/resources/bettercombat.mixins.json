@@ -10,11 +10,13 @@
     "LivingEntityMixin",
     "PlayerEntityAccessor",
     "PlayerEntityMixin",
+    "RangedWeaponItemMixin",
     "ServerPlayNetworkHandlerMixin",
     "SweepingEnchantmentMixin"
   ],
   "client": [
     "client.AbstractClientPlayerEntityMixin",
+    "client.AnimationsOnlyMixin",
     "client.ClientPlayerEntityMixin",
     "client.ClientPlayerInteractionManagerMixin",
     "client.ClientPlayNetworkHandlerMixin",

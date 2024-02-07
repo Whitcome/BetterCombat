@@ -1,6 +1,21 @@
+# 1.8.4
+
+- Fix ReplayMod Compat, thanks to Smartin-b #317 #24
+- Fix Pehkui Compatibility, thanks to Leximon #326
+- Improve First Person Model compatibility #329
+
+# 1.8.3
+
+- Fix two-handed ranged weapons ignoring projectile held in the offhand slot
+
+# 1.8.2
+
+- Add soft compatibility with Spell Engine, disable idle animation while casting spells
+
 # 1.8.1
 
-- (1.20.2) Fix packet handling issues in multiplayer causing players to disconnect.
+- (Forge) fix hand swap deleting offhand item, when holding two handed items.
+- (Forge) Requires at least Forge 47.2.0
 
 # 1.8.0
 
@@ -16,14 +31,10 @@ Added new presets:
 - `crossbow_two_handed_heavy`
 
 Other changes:
-- (1.20.2) Fix packet handling issues preventing multiplayer, and rejoining a world in single player
 - Fix corrupted fallback config causing crash 
 - Keep order of `player_relations` in server config
 - Add Japanese translation, thanks to SAGA23456 #289
 - Update Russian translation, thanks to mpustovoi #288
-- (Forge) fix hand swap deleting offhand item, when holding two handed items.
-- (Forge) Requires at least Forge 47.2.0
-- (Forge) Fixed networking stack, thanks to YuRaNnNzZZ #295
 
 # 1.7.4
 

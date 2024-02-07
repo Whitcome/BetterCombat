@@ -33,6 +33,7 @@ import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,6 +57,8 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
 
     @Shadow public int attackCooldown;
 
+    @Shadow @Final private static Logger LOGGER;
+
     private MinecraftClient thisClient() {
         return (MinecraftClient)((Object)this);
     }
@@ -72,7 +75,7 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
     // Targeting the method where all the disconnection related logic is.
     @Inject(method = "disconnect(Lnet/minecraft/client/gui/screen/Screen;)V",at = @At("TAIL"))
     private void disconnect_TAIL(Screen screen, CallbackInfo ci) {
-        BetterCombatClient.ENABLED = false;
+        BetterCombatClient.serverCombatMode = CombatMode.ANIMATIONS_ONLY;
     }
 
     private void setupTextRenderer() {
@@ -110,7 +113,7 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
     // Press to attack
     @Inject(method = "doAttack", at = @At("HEAD"), cancellable = true)
     private void pre_doAttack(CallbackInfoReturnable<Boolean> info) {
-        if (!BetterCombatClient.ENABLED) { return; }
+        if (BetterCombat.getCurrentCombatMode() != CombatMode.BETTER_COMBAT) return;
 
         MinecraftClient client = thisClient();
         WeaponAttributes attributes = WeaponRegistry.getAttributes(client.player.getMainHandStack());
@@ -128,7 +131,7 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
     // Hold to attack
     @Inject(method = "handleBlockBreaking", at = @At("HEAD"), cancellable = true)
     private void pre_handleBlockBreaking(boolean bl, CallbackInfo ci) {
-        if (!BetterCombatClient.ENABLED) { return; }
+        if (BetterCombat.getCurrentCombatMode() != CombatMode.BETTER_COMBAT) return;
 
         MinecraftClient client = thisClient();
         WeaponAttributes attributes = WeaponRegistry.getAttributes(client.player.getMainHandStack());
@@ -156,7 +159,8 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
 
     @Inject(method = "doItemUse", at = @At("HEAD"), cancellable = true)
     private void pre_doItemUse(CallbackInfo ci) {
-        if (!BetterCombatClient.ENABLED) { return; }
+        LOGGER.info("Nope");
+        if (BetterCombat.getCurrentCombatMode() != CombatMode.BETTER_COMBAT) return;
 
         var hand = getCurrentHand();
         if (hand == null) { return; }
@@ -329,6 +333,7 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
 
     @Inject(method = "tick",at = @At("HEAD"))
     private void pre_Tick(CallbackInfo ci) {
+        if (BetterCombat.getCurrentCombatMode() != CombatMode.BETTER_COMBAT) return;
         if (player == null) {
             return;
         }
@@ -342,6 +347,7 @@ public abstract class MinecraftClientInject implements MinecraftClient_BetterCom
 
     @Inject(method = "tick",at = @At("TAIL"))
     private void post_Tick(CallbackInfo ci) {
+        if (BetterCombat.getCurrentCombatMode() != CombatMode.BETTER_COMBAT) return;
         if (player == null) {
             return;
         }

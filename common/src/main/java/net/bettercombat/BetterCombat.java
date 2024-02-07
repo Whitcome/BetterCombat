@@ -1,24 +1,24 @@
 package net.bettercombat;
 
-import com.mojang.logging.LogUtils;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import me.shedaniel.autoconfig.serializer.PartitioningSerializer;
+import net.bettercombat.client.BetterCombatClient;
 import net.bettercombat.compatibility.CompatibilityFlags;
 import net.bettercombat.config.FallbackConfig;
 import net.bettercombat.config.ServerConfig;
 import net.bettercombat.config.ServerConfigWrapper;
+import net.bettercombat.logic.CombatMode;
 import net.bettercombat.logic.WeaponAttributesFallback;
 import net.bettercombat.logic.WeaponRegistry;
 import net.bettercombat.network.ServerNetwork;
 import net.bettercombat.utils.SoundHelper;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.minecraft.client.MinecraftClient;
 import net.tinyconfig.ConfigManager;
-import org.slf4j.Logger;
 
 public class BetterCombat implements ModInitializer {
-    static final Logger LOGGER = LogUtils.getLogger();
     public static final String MODID = "bettercombat";
     public static ServerConfig config;
     private static FallbackConfig fallbackDefault = FallbackConfig.createDefault();
@@ -61,5 +61,13 @@ public class BetterCombat implements ModInitializer {
             fallbackConfig.value = FallbackConfig.migrate(fallbackConfig.value, FallbackConfig.createDefault());
         }
         fallbackConfig.save();
+    }
+
+    public static CombatMode getCurrentCombatMode() {
+        var world = MinecraftClient.getInstance().world;
+        if (world != null && world.isClient()) {
+            return BetterCombatClient.config.singlePlayerCombatMode;
+        }
+        return BetterCombatClient.serverCombatMode;
     }
 }
