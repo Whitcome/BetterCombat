@@ -9,7 +9,6 @@ import net.bettercombat.api.AttributesContainer;
 import net.bettercombat.api.WeaponAttributes;
 import net.bettercombat.api.WeaponAttributesHelper;
 import net.bettercombat.network.Packets;
-import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketByteBuf;
@@ -56,7 +55,18 @@ public class WeaponRegistry {
 
     // LOADING
 
-    public static void loadAttributes(ResourceManager resourceManager) {
+    public static void setup(ResourceManager resourceManager) {
+        registrations = new HashMap<>();
+        containers = new HashMap<>();
+
+        WeaponRegistry.loadAttributes(resourceManager);
+        if (BetterCombat.config.fallback_compatibility_enabled) {
+            WeaponAttributesFallback.initialize();
+        }
+        WeaponRegistry.encodeRegistry();
+    }
+
+    private static void loadAttributes(ResourceManager resourceManager) {
         loadContainers(resourceManager);
 
         // Resolving parents
@@ -175,11 +185,5 @@ public class WeaponRegistry {
 
     public static Packets.WeaponRegistrySync getEncodedRegistry() {
         return encodedRegistrations;
-    }
-
-    public static void clear() {
-        // When disconnecting from server
-        registrations = new HashMap<>();
-        containers = new HashMap<>();
     }
 }
